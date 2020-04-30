@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText inputEmail;
     private EditText inputPassword;
     private TextView txtSignup;
+    private ProgressBar progressBar;
+
     private FirebaseAuth firebaseAuth;
 
     private String email, password;
@@ -35,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        if(firebaseAuth.getCurrentUser() != null){
+        if (firebaseAuth.getCurrentUser() != null) {
             startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
             finish();
         }
@@ -44,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         inputPassword = findViewById(R.id.inputPassword_login);
         btnLogin = findViewById(R.id.btnLogin);
         txtSignup = findViewById(R.id.txtRegister);
+        progressBar = findViewById(R.id.progressbar_login);
 
         txtSignup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,27 +63,29 @@ public class LoginActivity extends AppCompatActivity {
                 email = inputEmail.getText().toString();
                 password = inputPassword.getText().toString();
 
-                if(TextUtils.isEmpty(email)){
-                    Toast.makeText(LoginActivity.this,"Please enter email", Toast.LENGTH_LONG).show();
-                }
-                else if(TextUtils.isEmpty(password)){
-                    Toast.makeText(LoginActivity.this,"Please enter password",Toast.LENGTH_LONG).show();
-                } else{
+                if (TextUtils.isEmpty(email)) {
+                    inputEmail.setError("Please enter email");
+                } else if (TextUtils.isEmpty(password)) {
+                    inputPassword.setError("Please enter password");
+                } else {
                     userLogin(email, password);
                 }
             }
         });
     }
 
-    private void userLogin(String email, String password){
+    private void userLogin(String email, String password) {
+        progressBar.setVisibility(View.VISIBLE);
+
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
+                            progressBar.setVisibility(View.GONE);
                             finish();
                             startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
-                        } else{
+                        } else {
                             Toast.makeText(LoginActivity.this, "Gagal login", Toast.LENGTH_LONG).show();
                         }
                     }

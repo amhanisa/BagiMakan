@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DetailMakananActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageMakananDetail"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+        <LinearLayout
+            android:id="@+id/containerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtUserNameDetail"
+            android:layout_alignParentBottom="false"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnMintaMakanan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:text="Minta"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnDeleteMakanan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtLokasiMakananDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtNamaMakananDetail"
+            android:layout_marginStart="10dp"
+            android:text="Lokasi" />
+
+        <TextView
+            android:id="@+id/txtDateMakananDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageMakananDetail"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="date" />
+
+        <TextView
+            android:id="@+id/txtUserNameDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtLokasiMakananDetail"
+            android:layout_marginStart="10dp"
+            android:text="UserName" />
+
+        <TextView
+            android:id="@+id/txtJumlahMakananDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtDateMakananDetail"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:text="JumlahMakanan"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txtNamaMakananDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageMakananDetail"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toStartOf="@+id/txtDateMakananDetail"
+            android:ellipsize="end"
+            android:text="Nama Makanan"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewRequest"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/containerButton" />
+    </RelativeLayout>
+</androidx.core.widget.NestedScrollView>

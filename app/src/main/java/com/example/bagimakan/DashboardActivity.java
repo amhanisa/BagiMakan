@@ -11,11 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 public class DashboardActivity extends AppCompatActivity {
 
@@ -31,19 +27,24 @@ public class DashboardActivity extends AppCompatActivity {
                 case R.id.navigation_home:
                     selectedFragment = new FragmentHome();
                     break;
-                case R.id.navigation_tengah:
-                    selectedFragment = new FragmentTengah();
+                case R.id.navigation_bagimakan:
+                    selectedFragment = new FragmentBagiMakan();
                     break;
                 case R.id.navigation_profile:
                     selectedFragment = new FragmentProfile();
                     break;
             }
 
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    selectedFragment).commit();
+            replaceFragment(selectedFragment);
+
             return true;
         }
     };
+
+    public void replaceFragment(Fragment selectedFragment){
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                selectedFragment).commit();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

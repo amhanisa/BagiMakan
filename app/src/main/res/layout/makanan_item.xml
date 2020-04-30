@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cardViewMakanan"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageMakananCard"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginEnd="10dp" />
+
+        <TextView
+            android:id="@+id/txtNamaMakananCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_toEndOf="@+id/imageMakananCard"
+            android:text="Nama Makanan"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtDateMakananCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="Tanggal" />
+
+        <TextView
+            android:id="@+id/txtJumlahMakananCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtNamaMakananCard"
+            android:layout_toEndOf="@+id/imageMakananCard"
+            android:text="Jumlah" />
+
+        <TextView
+            android:id="@+id/txtLokasiCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtJumlahMakananCard"
+            android:layout_toEndOf="@+id/imageMakananCard"
+            android:text="Lokasi" />
+
+        <TextView
+            android:id="@+id/txtUserNameCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtLokasiCard"
+            android:layout_toEndOf="@+id/imageMakananCard"
+            android:text="DisplayName" />
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

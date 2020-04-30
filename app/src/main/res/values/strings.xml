@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">BagiMakan</string>
-    <string name="title_activity_dashboard">DashboardActivity</string>
+    <string name="title_activity_dashboard">BagiMakan</string>
     <string name="title_home">Home</string>
-    <string name="title_tengah">Apaya ini</string>
+    <string name="title_bagimakan">Bagi Makan</string>
     <string name="title_profile">Profile</string>
 
     <!-- TODO: Remove or change this placeholder text -->

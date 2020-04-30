@@ -13,16 +13,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bagimakan.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText inputName;
+    private EditText inputKontak;
     private EditText inputEmail;
     private EditText inputPassword;
     private EditText inputRePassword;
@@ -31,8 +36,9 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView txtLogin;
 
     private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore firebaseFirestore;
 
-    private String name, email, password, repassword;
+    private String name, kontak, email, password, repassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         inputName = findViewById(R.id.inputName_signup);
+        inputKontak = findViewById(R.id.inputHandphone_signup);
         inputEmail = findViewById(R.id.inputEmail_signup);
         inputPassword = findViewById(R.id.inputPassword_signup);
         inputRePassword = findViewById(R.id.inputRePassword_signup);
@@ -65,34 +72,39 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 name = inputName.getText().toString();
+                kontak = inputKontak.getText().toString();
                 email = inputEmail.getText().toString();
                 password = inputPassword.getText().toString();
                 repassword = inputRePassword.getText().toString();
 
                 if (TextUtils.isEmpty(name)) {
-                    Toast.makeText(RegisterActivity.this, "Please enter name", Toast.LENGTH_LONG).show();
+                    inputName.setError("Please enter name");
+                } else if (TextUtils.isEmpty(kontak)) {
+                    inputKontak.setError("Please enter no handphone");
                 } else if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(RegisterActivity.this, "Please enter email", Toast.LENGTH_LONG).show();
+                    inputEmail.setError("Please enter email");
                 } else if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(RegisterActivity.this, "Please enter password", Toast.LENGTH_LONG).show();
+                    inputPassword.setError("Please enter password");
                 } else if (TextUtils.isEmpty(repassword)) {
-                    Toast.makeText(RegisterActivity.this, "Please enter password", Toast.LENGTH_LONG).show();
+                    inputRePassword.setError("Please confirm password");
                 } else if (!password.equals(repassword)) {
-                    Toast.makeText(RegisterActivity.this, "Password and Confirm Password doesn't match", Toast.LENGTH_LONG).show();
+                    inputPassword.setError("Password doesn't match");
                 } else {
-                    registerUser(name, email, password);
+                    registerUser(name, kontak, email, password);
                 }
             }
         });
     }
 
-    private void registerUser(final String name, String email, String password) {
+    private void registerUser(final String name, final String kontak, String email, String password) {
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     FirebaseUser user = firebaseAuth.getCurrentUser();
-                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(name)
+                            .build();
                     user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -103,6 +115,14 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                         }
                     });
+
+                    firebaseFirestore = FirebaseFirestore.getInstance();
+
+                    User userBaru = new User(kontak);
+
+                    firebaseFirestore.collection("users")
+                            .document(user.getUid())
+                            .set(userBaru);
 
                     Toast.makeText(RegisterActivity.this, "Registrasi berhasil", Toast.LENGTH_LONG).show();
                     startActivity(new Intent(getApplicationContext(), LoginActivity.class));

@@ -29,49 +29,74 @@
              android:layout_marginEnd="8dp"
              android:text="Register BagiMakan" />
 
-         <EditText
-             android:id="@+id/inputName_signup"
-             android:layout_width="wrap_content"
+         <com.google.android.material.textfield.TextInputLayout
+             android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:layout_marginStart="8dp"
-             android:layout_marginTop="8dp"
-             android:layout_marginEnd="8dp"
-             android:ems="10"
-             android:hint="Name"
-             android:inputType="textPersonName" />
+             app:errorEnabled="true"
+             app:counterMaxLength="30">
 
-         <EditText
-             android:id="@+id/inputEmail_signup"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_marginStart="8dp"
-             android:layout_marginTop="8dp"
-             android:layout_marginEnd="8dp"
-             android:ems="10"
-             android:hint="Email"
-             android:inputType="textPersonName" />
+             <com.google.android.material.textfield.TextInputEditText
+                 android:id="@+id/inputName_signup"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:hint="Nama"
+                 android:inputType="textPersonName" />
+         </com.google.android.material.textfield.TextInputLayout>
 
-         <EditText
-             android:id="@+id/inputPassword_signup"
-             android:layout_width="wrap_content"
+         <com.google.android.material.textfield.TextInputLayout
+             android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:layout_marginStart="8dp"
-             android:layout_marginTop="8dp"
-             android:layout_marginEnd="8dp"
-             android:ems="10"
-             android:hint="Password"
-             android:inputType="textPassword" />
+             app:errorEnabled="true"
+             app:counterMaxLength="12">
 
-         <EditText
-             android:id="@+id/inputRePassword_signup"
-             android:layout_width="wrap_content"
+             <com.google.android.material.textfield.TextInputEditText
+                 android:id="@+id/inputHandphone_signup"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:hint="No Handphone"
+                 android:inputType="phone" />
+         </com.google.android.material.textfield.TextInputLayout>
+
+         <com.google.android.material.textfield.TextInputLayout
+             android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:layout_marginStart="8dp"
-             android:layout_marginTop="8dp"
-             android:layout_marginEnd="8dp"
-             android:ems="10"
-             android:hint="Confirm Password"
-             android:inputType="textPassword" />
+             app:errorEnabled="true">
+
+             <com.google.android.material.textfield.TextInputEditText
+                 android:id="@+id/inputEmail_signup"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:hint="Email"
+                 android:inputType="textEmailAddress" />
+         </com.google.android.material.textfield.TextInputLayout>
+
+         <com.google.android.material.textfield.TextInputLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             app:errorEnabled="true"
+             app:passwordToggleEnabled="true">
+
+             <com.google.android.material.textfield.TextInputEditText
+                 android:id="@+id/inputPassword_signup"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:hint="Password"
+                 android:inputType="textPassword" />
+         </com.google.android.material.textfield.TextInputLayout>
+
+         <com.google.android.material.textfield.TextInputLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             app:errorEnabled="true"
+             app:passwordToggleEnabled="true">
+
+             <com.google.android.material.textfield.TextInputEditText
+                 android:id="@+id/inputRePassword_signup"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:hint="Confirm Password"
+                 android:inputType="textPassword" />
+         </com.google.android.material.textfield.TextInputLayout>
 
          <Button
              android:id="@+id/btnSignup"
