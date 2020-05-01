@@ -11,18 +11,20 @@
 
         <ImageView
             android:id="@+id/imageMakananCard"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
             android:layout_marginEnd="10dp" />
 
         <TextView
             android:id="@+id/txtNamaMakananCard"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@+id/txtDateMakananCard"
             android:layout_toEndOf="@+id/imageMakananCard"
+            android:ellipsize="end"
             android:text="Nama Makanan"
-            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
@@ -44,10 +46,13 @@
 
         <TextView
             android:id="@+id/txtLokasiCard"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txtJumlahMakananCard"
+            android:layout_marginEnd="16dp"
             android:layout_toEndOf="@+id/imageMakananCard"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:text="Lokasi" />
 
         <TextView

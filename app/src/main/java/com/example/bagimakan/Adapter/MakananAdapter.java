@@ -29,11 +29,11 @@ public class MakananAdapter extends FirestoreRecyclerAdapter<Makanan, MakananAda
     protected void onBindViewHolder(@NonNull MakananViewHolder holder, int position, @NonNull Makanan model) {
         holder.namaMakanan.setText(model.getName());
         holder.userName.setText("Pemilik : " + model.getUserName());
-        holder.lokasiMakanan.setText("Lokasi : " + model.getLokasi());
+        holder.lokasiMakanan.setText(model.getLokasi());
         holder.jumlahMakanan.setText("Jumlah : " + model.getJumlah().toString());
         long timeInMillis = model.getDate().getTime();
         holder.tanggalMakanan.setText(DateUtils.getRelativeTimeSpanString(timeInMillis));
-        Picasso.get().load(model.getImageUrl()).fit().centerCrop().into(holder.imageMakanan);
+        Picasso.get().load(model.getImageUrl()).placeholder(R.drawable.ic_image_black_24dp).fit().centerCrop().into(holder.imageMakanan);
     }
 
     @NonNull

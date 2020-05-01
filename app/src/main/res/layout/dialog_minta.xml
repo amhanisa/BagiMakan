@@ -12,6 +12,8 @@
             android:id="@+id/inputMinta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Jumlah" />
+            android:hint="Jumlah"
+            android:inputType="number"
+            android:maxLength="5" />
     </com.google.android.material.textfield.TextInputLayout>
 </RelativeLayout>

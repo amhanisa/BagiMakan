@@ -70,7 +70,7 @@ public class BagiDialog extends AppCompatDialogFragment {
         txtUsername = view.findViewById(R.id.txtUsername_DialogBagi);
         txtJumlah = view.findViewById(R.id.txtJumlah_DialogBagi);
 
-        txtUsername.setText(userName);
+        txtUsername.setText(userName + " ingin meminta dengan jumlah");
         txtJumlah.setText(jumlah);
 
 

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -49,6 +50,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
     private TextView jumlahMakanan;
     private TextView dateMakanan;
     private TextView userName;
+    private TextView kontak;
 
     private RecyclerView recyclerView;
     private RequestAdapter requestAdapter;
@@ -78,6 +80,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
         dateMakanan = findViewById(R.id.txtDateMakananDetail);
         imageView = findViewById(R.id.imageMakananDetail);
         userName = findViewById(R.id.txtUserNameDetail);
+        kontak = findViewById(R.id.txtKontakDetail);
         btnDelete = findViewById(R.id.btnDeleteMakanan);
         btnMinta = findViewById(R.id.btnMintaMakanan);
 
@@ -111,7 +114,8 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
                 long timeInMillis = makanan.getDate().getTime();
                 dateMakanan.setText(DateUtils.getRelativeTimeSpanString(timeInMillis));
                 userName.setText(makanan.getUserName());
-                Picasso.get().load(makanan.getImageUrl()).fit().centerCrop().into(imageView);
+                kontak.setText(makanan.getKontak());
+                Picasso.get().load(makanan.getImageUrl()).placeholder(R.drawable.ic_image_black_24dp).fit().centerCrop().into(imageView);
             }
         });
 
@@ -129,6 +133,18 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
             public void onClick(View view) {
                 MintaDialog dialog = new MintaDialog();
                 dialog.show(getSupportFragmentManager(), "Dialog Minta Makan");
+            }
+        });
+
+        lokasiMakanan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri gmmIntentUri = Uri.parse("geo:" + makanan.getLat() + "," + makanan.getLng() + "?q=" + makanan.getLokasi());
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(mapIntent);
+                }
             }
         });
 

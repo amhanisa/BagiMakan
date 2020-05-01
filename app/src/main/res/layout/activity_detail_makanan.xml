@@ -20,7 +20,7 @@
             android:id="@+id/containerButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txtUserNameDetail"
+            android:layout_below="@+id/txtKontakDetail"
             android:layout_alignParentBottom="false"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="8dp"
@@ -42,13 +42,33 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/txtLokasiMakananDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:id="@+id/layoutLokasiDetail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_below="@+id/txtNamaMakananDetail"
             android:layout_marginStart="10dp"
-            android:text="Lokasi" />
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/txtJumlahMakananDetail"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_location_on_black_24dp" />
+
+            <TextView
+                android:id="@+id/txtLokasiMakananDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Lokasi" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/txtDateMakananDetail"
@@ -64,9 +84,18 @@
             android:id="@+id/txtUserNameDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txtLokasiMakananDetail"
+            android:layout_below="@+id/layoutLokasiDetail"
+            android:layout_marginTop="4dp"
             android:layout_marginStart="10dp"
             android:text="UserName" />
+
+        <TextView
+            android:id="@+id/txtKontakDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_below="@+id/txtUserNameDetail"
+            android:text="Kontak" />
 
         <TextView
             android:id="@+id/txtJumlahMakananDetail"
@@ -92,10 +121,18 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/txtRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_below="@+id/containerButton"
+            android:text="List Permintaan" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewRequest"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/containerButton" />
+            android:layout_below="@id/txtRequest" />
     </RelativeLayout>
 </androidx.core.widget.NestedScrollView>

@@ -18,17 +18,21 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.bagimakan.Model.Makanan;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -46,7 +50,8 @@ import static android.app.Activity.RESULT_OK;
  */
 public class FragmentBagiMakan extends Fragment {
 
-    public static final int PICK_IMAGE_REQUEST = 1;
+    public int PICK_IMAGE_REQUEST = 1;
+    public int PICK_ADDRESS_REQUEST = 999;
 
     private EditText inputNamaMakanan;
     private EditText inputJumlahMakanan;
@@ -55,12 +60,13 @@ public class FragmentBagiMakan extends Fragment {
     private Button btnBagiMakanan;
     private ImageView imageMakanan;
     private ProgressBar progressBagiMakan;
+    private ImageButton btnMaps;
 
     private Uri imageUri = null;
+    private LatLng latlng;
 
     private StorageReference storageReference;
-    private FirebaseFirestore db;
-    private FirebaseUser user;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageTask uploadTask;
 
     public FragmentBagiMakan() {
@@ -81,6 +87,15 @@ public class FragmentBagiMakan extends Fragment {
         btnBagiMakanan = view.findViewById(R.id.btnBagiMakanan);
         imageMakanan = view.findViewById(R.id.imageMakanan);
         progressBagiMakan = view.findViewById(R.id.progressBagiMakan);
+        btnMaps = view.findViewById(R.id.btnMaps);
+
+        btnMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent maps = new Intent(getContext(), MapsActivity.class);
+                startActivityForResult(maps, PICK_ADDRESS_REQUEST);
+            }
+        });
 
         btnChoosePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +120,7 @@ public class FragmentBagiMakan extends Fragment {
                     inputLokasi.setError("Please enter lokasi");
                 } else if (imageUri == null) {
                     Toast.makeText(getContext(), "No File selected", Toast.LENGTH_LONG).show();
-                } else{
+                } else {
                     if (uploadTask != null && uploadTask.isInProgress()) {
                         Log.e("ERRORRRR", "WOOOY");
                         Toast.makeText(getContext(), "Upload in progress", Toast.LENGTH_SHORT).show();
@@ -137,6 +152,10 @@ public class FragmentBagiMakan extends Fragment {
 
             //tampilkan image ke imageviewer
             Picasso.get().load(imageUri).into(imageMakanan);
+        } else if (requestCode == PICK_ADDRESS_REQUEST && resultCode == RESULT_OK) {
+            inputLokasi.setText(data.getStringExtra("address"));
+            latlng = new LatLng(data.getDoubleExtra("lat", 0),
+                    data.getDoubleExtra("lng", 0));
         }
     }
 
@@ -163,29 +182,45 @@ public class FragmentBagiMakan extends Fragment {
                             @Override
                             public void onSuccess(Uri uri) {
 
-                                user = FirebaseAuth.getInstance().getCurrentUser();
+                                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                                //create POJO dari makanan
-                                Makanan makanan = new Makanan(inputNamaMakanan.getText().toString(),
-                                        Integer.parseInt(inputJumlahMakanan.getText().toString()),
-                                        inputLokasi.getText().toString(),
-                                        uri.toString(),
-                                        user.getDisplayName(),
-                                        user.getUid(),
-                                        new Date());
+                                final Uri imageUri = uri;
 
-                                //add data to database
-                                db = FirebaseFirestore.getInstance();
-                                db.collection("makanan")
-                                        .add(makanan)
-                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                            @Override
-                                            public void onSuccess(DocumentReference documentReference) {
-                                                //redirect ke home
-                                                Toast.makeText(getContext(), "Berhasil Berbagi Makan", Toast.LENGTH_LONG).show();
-                                                ((DashboardActivity) getActivity()).replaceFragment(new FragmentHome());
-                                            }
-                                        });
+                                //get kontak
+                                db.collection("users").document(user.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if (documentSnapshot.exists()) {
+
+                                            //create POJO dari makanan
+                                            Makanan makanan = new Makanan(inputNamaMakanan.getText().toString(),
+                                                    Integer.parseInt(inputJumlahMakanan.getText().toString()),
+                                                    inputLokasi.getText().toString(),
+                                                    latlng.latitude,
+                                                    latlng.longitude,
+                                                    imageUri.toString(),
+                                                    user.getDisplayName(),
+                                                    user.getUid(),
+                                                    new Date(),
+                                                    documentSnapshot.getString("kontak"));
+
+                                            //add data to database
+                                            db.collection("makanan")
+                                                    .add(makanan)
+                                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                        @Override
+                                                        public void onSuccess(DocumentReference documentReference) {
+                                                            //redirect ke home
+                                                            Toast.makeText(getContext(), "Berhasil Berbagi Makan", Toast.LENGTH_LONG).show();
+                                                            ((DashboardActivity) getActivity()).replaceFragment(new FragmentHome());
+                                                        }
+                                                    });
+
+                                        }
+                                    }
+                                });
+
+
                             }
                         });
 

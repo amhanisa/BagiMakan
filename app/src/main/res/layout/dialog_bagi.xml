@@ -17,5 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Jumlah" />
+        android:text="Jumlah"
+        android:textSize="18sp" />
 </LinearLayout>
