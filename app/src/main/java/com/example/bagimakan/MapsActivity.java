@@ -43,7 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
-    private Location mLastKnownLocation = new Location("cimahi");
+    private Location mLastKnownLocation = new Location("");
     private Address address = new Address(Locale.getDefault());
     private Marker markerPosisi;
 
@@ -112,8 +112,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } else {
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                mLastKnownLocation = null;
-                getLocationPermission();
             }
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
@@ -130,6 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
+                    getDeviceLocation();
                 }
             }
         }
@@ -137,10 +136,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void getDeviceLocation() {
-        /*
-         * Get the best and most recent location of the device, which may be null in rare
-         * cases when a location is not available.
-         */
         try {
             if (mLocationPermissionGranted) {
                 Task locationResult = mFusedLocationProviderClient.getLastLocation();
@@ -150,29 +145,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = (Location) task.getResult();
+
+                            Log.e("LAST", String.valueOf(mLastKnownLocation.getLatitude()));
+
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), 100));
 
-                            markerPosisi.setPosition(new LatLng(mLastKnownLocation.getLatitude(),
-                                    mLastKnownLocation.getLongitude()));
-
-                            Geocoder geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
-                            try {
-                                List<Address> addresses = geocoder.getFromLocation(markerPosisi.getPosition().latitude,
-                                        markerPosisi.getPosition().longitude, 1);
-
-                                address = addresses.get(0);
-                                txtLocation.setText(address.getAddressLine(0));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            markerPosisi = markerPosisi = mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude())).draggable(true));
+                            getAddress();
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
                         }
                     }
                 });
+            } else {
+                //Set Default to Bandung
+                mLastKnownLocation.setLatitude(-6.914864);
+                mLastKnownLocation.setLongitude(107.608238);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(mLastKnownLocation.getLatitude(),
+                                mLastKnownLocation.getLongitude()), 100));
+
+                markerPosisi = markerPosisi = mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude())).draggable(true));
+                getAddress();
+                Log.e("LASTT", String.valueOf(mLastKnownLocation.getLatitude()));
             }
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
@@ -183,37 +181,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
-        markerPosisi = mMap.addMarker(new MarkerOptions().position(new LatLng(1, 1)).draggable(true));
 
-        updateLocationUI();
         getDeviceLocation();
-
-        final Geocoder geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
+        updateLocationUI();
 
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
-
+                btnConfirm.setClickable(false);
             }
 
             @Override
             public void onMarkerDrag(Marker marker) {
                 txtLocation.setText("Loading");
+                btnConfirm.setClickable(false);
             }
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                try {
-                    List<Address> addresses = geocoder.getFromLocation(markerPosisi.getPosition().latitude,
-                            markerPosisi.getPosition().longitude, 1);
-
-                    address = addresses.get(0);
-                    txtLocation.setText(address.getAddressLine(0));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                getAddress();
+                btnConfirm.setClickable(true);
             }
         });
 
+    }
+
+    private void getAddress() {
+        try {
+            Geocoder geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(markerPosisi.getPosition().latitude,
+                    markerPosisi.getPosition().longitude, 1);
+
+            address = addresses.get(0);
+            txtLocation.setText(address.getAddressLine(0));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
