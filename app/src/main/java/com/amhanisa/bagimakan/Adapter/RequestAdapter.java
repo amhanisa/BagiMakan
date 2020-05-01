@@ -1,16 +1,15 @@
-package com.example.bagimakan.Adapter;
+package com.amhanisa.bagimakan.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.bagimakan.Model.Request;
-import com.example.bagimakan.R;
+import com.amhanisa.bagimakan.Model.Request;
+import com.amhanisa.bagimakan.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;

@@ -1,4 +1,4 @@
-package com.example.bagimakan;
+package com.amhanisa.bagimakan;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

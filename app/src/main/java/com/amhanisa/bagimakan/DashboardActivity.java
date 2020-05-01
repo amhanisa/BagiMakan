@@ -1,4 +1,4 @@
-package com.example.bagimakan;
+package com.amhanisa.bagimakan;
 
 import android.content.Intent;
 import android.os.Bundle;

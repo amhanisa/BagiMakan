@@ -1,4 +1,4 @@
-package com.example.bagimakan;
+package com.amhanisa.bagimakan;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

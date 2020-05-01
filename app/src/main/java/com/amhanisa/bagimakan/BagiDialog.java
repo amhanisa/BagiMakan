@@ -1,4 +1,4 @@
-package com.example.bagimakan;
+package com.amhanisa.bagimakan;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -12,8 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
-
-import com.example.bagimakan.Model.Request;
 
 public class BagiDialog extends AppCompatDialogFragment {
 

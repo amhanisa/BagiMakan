@@ -1,4 +1,4 @@
-package com.example.bagimakan;
+package com.amhanisa.bagimakan;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,9 +16,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.bagimakan.Adapter.RequestAdapter;
-import com.example.bagimakan.Model.Makanan;
-import com.example.bagimakan.Model.Request;
+import com.amhanisa.bagimakan.Adapter.RequestAdapter;
+import com.amhanisa.bagimakan.Model.Makanan;
+import com.amhanisa.bagimakan.Model.Request;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

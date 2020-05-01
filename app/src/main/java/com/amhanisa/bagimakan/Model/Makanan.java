@@ -1,7 +1,6 @@
-package com.example.bagimakan.Model;
+package com.amhanisa.bagimakan.Model;
 
 import com.google.firebase.firestore.Exclude;
-import com.google.firebase.firestore.GeoPoint;
 
 import java.util.Date;
 

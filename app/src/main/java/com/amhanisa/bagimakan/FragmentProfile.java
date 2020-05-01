@@ -1,10 +1,8 @@
-package com.example.bagimakan;
-
+package com.amhanisa.bagimakan;
 
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,44 +10,55 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.example.bagimakan.Adapter.MakananAdapter;
-import com.example.bagimakan.Model.Makanan;
+import com.amhanisa.bagimakan.Adapter.MakananAdapter;
+import com.amhanisa.bagimakan.Model.Makanan;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
-import java.util.List;
+public class FragmentProfile extends Fragment {
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class FragmentHome extends Fragment {
-
-    private RecyclerView recyclerView;
-    private MakananAdapter makananAdapter;
-
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private FirebaseUser user = firebaseAuth.getCurrentUser();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public FragmentHome() {
-        // Required empty public constructor
+    private Button btnLogout;
+    private TextView txtUser;
+    private MakananAdapter makananAdapter;
+    private RecyclerView recyclerView;
+
+    private ProgressBar progressBar;
+
+    public FragmentProfile() {
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        btnLogout = view.findViewById(R.id.btnLogout);
+        txtUser = view.findViewById(R.id.txtUser_Profile);
+
+        txtUser.setText("Halo, " + user.getDisplayName() + " " + user.getEmail());
+
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                firebaseAuth.signOut();
+                getActivity().finish();
+                startActivity(new Intent(getContext(), LoginActivity.class));
+            }
+        });
 
         setupRecyclerView(view);
 
@@ -57,7 +66,9 @@ public class FragmentHome extends Fragment {
     }
 
     private void setupRecyclerView(View view) {
-        Query query = db.collection("makanan").orderBy("date", Query.Direction.DESCENDING);
+        Query query = db.collection("makanan")
+                .whereEqualTo("userId", user.getUid())
+                .orderBy("date", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<Makanan> options = new FirestoreRecyclerOptions.Builder<Makanan>()
                 .setQuery(query, Makanan.class)
@@ -65,7 +76,7 @@ public class FragmentHome extends Fragment {
 
         makananAdapter = new MakananAdapter(options);
 
-        recyclerView = view.findViewById(R.id.recyclerViewMakanan_Home);
+        recyclerView = view.findViewById(R.id.recyclerViewMakanan_Profile);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(makananAdapter);
@@ -92,4 +103,5 @@ public class FragmentHome extends Fragment {
         super.onStop();
         makananAdapter.stopListening();
     }
+
 }
