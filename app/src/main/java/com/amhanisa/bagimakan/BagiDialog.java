@@ -20,11 +20,11 @@ public class BagiDialog extends AppCompatDialogFragment {
 
     private BagiDialogListener listener;
 
-    public static BagiDialog newInstance(String key, String userName, String jumlah) {
+    public static BagiDialog newInstance(String key, String userName, Integer jumlah) {
         Bundle args = new Bundle();
         args.putString("key", key);
         args.putString("userName", userName);
-        args.putString("jumlah", jumlah);
+        args.putInt("jumlah", jumlah);
         BagiDialog fragment = new BagiDialog();
         fragment.setArguments(args);
         return fragment;
@@ -35,7 +35,7 @@ public class BagiDialog extends AppCompatDialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         final String key = getArguments().getString("key");
         String userName = getArguments().getString("userName");
-        String jumlah = getArguments().getString("jumlah");
+        final Integer jumlah = getArguments().getInt("jumlah");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -47,7 +47,7 @@ public class BagiDialog extends AppCompatDialogFragment {
                 .setNegativeButton("Tolak", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        listener.bagiMakan(key, false);
+                        listener.bagiMakan(key, jumlah, false);
                     }
                 })
                 .setNeutralButton("Close", new DialogInterface.OnClickListener() {
@@ -59,8 +59,7 @@ public class BagiDialog extends AppCompatDialogFragment {
                 .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        listener.bagiMakan(key, true
-                        );
+                        listener.bagiMakan(key, jumlah, true);
                     }
                 });
 
@@ -69,8 +68,7 @@ public class BagiDialog extends AppCompatDialogFragment {
         txtJumlah = view.findViewById(R.id.txtJumlah_DialogBagi);
 
         txtUsername.setText(userName + " ingin meminta dengan jumlah");
-        txtJumlah.setText(jumlah);
-
+        txtJumlah.setText(jumlah.toString());
 
         return builder.create();
     }
@@ -87,7 +85,7 @@ public class BagiDialog extends AppCompatDialogFragment {
     }
 
     public interface BagiDialogListener {
-        void bagiMakan(String key, Boolean bagi);
+        void bagiMakan(String key, Integer jumlah, Boolean bagi);
     }
 
 }

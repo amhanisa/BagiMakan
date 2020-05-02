@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -16,6 +17,15 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 public class MintaDialog extends AppCompatDialogFragment {
     private EditText inputMinta;
     private MintaDialogListener listener;
+
+    public static MintaDialog newInstance(int maxJumlah) {
+
+        Bundle args = new Bundle();
+        args.putInt("maxJumlah", maxJumlah);
+        MintaDialog fragment = new MintaDialog();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @NonNull
     @Override
@@ -40,7 +50,11 @@ public class MintaDialog extends AppCompatDialogFragment {
                         listener.mintaMakan(jumlahMinta);
                     }
                 });
+
+        Integer maxJumlah = getArguments().getInt("maxJumlah");
+
         inputMinta = view.findViewById(R.id.inputMinta);
+        inputMinta.setFilters(new InputFilter[]{new InputFilterMinMax(1, maxJumlah)});
 
         return builder.create();
     }
@@ -49,14 +63,14 @@ public class MintaDialog extends AppCompatDialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        try{
+        try {
             listener = (MintaDialogListener) context;
-        } catch (ClassCastException e){
+        } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + "must implement listener");
         }
     }
 
-    public interface MintaDialogListener{
+    public interface MintaDialogListener {
         void mintaMakan(String jumlahMinta);
     }
 }

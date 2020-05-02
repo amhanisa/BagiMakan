@@ -1,6 +1,7 @@
 package com.amhanisa.bagimakan;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,7 +27,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
@@ -62,13 +66,13 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
     private String MAKANAN_USER_ID;
     private Makanan makanan;
 
+    DocumentReference docRef;
+    ListenerRegistration registration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_makanan);
-
-        Intent intent = getIntent();
 
         db = FirebaseFirestore.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
@@ -84,70 +88,81 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
         btnDelete = findViewById(R.id.btnDeleteMakanan);
         btnMinta = findViewById(R.id.btnMintaMakanan);
 
+        onNewIntent(getIntent());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        requestAdapter.startListening();
+        getDetailMakanan();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        requestAdapter.stopListening();
+        registration.remove();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+
         if (intent.hasExtra("key")) {
             MAKANAN_KEY = intent.getStringExtra("key");
             MAKANAN_USER_ID = intent.getStringExtra("userId");
+            Log.e("NEWINTENT", MAKANAN_KEY.toString());
         } else {
             finish();
         }
 
-        //get detail makanan
-        DocumentReference docRef = db.collection("makanan").document(MAKANAN_KEY);
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                makanan = documentSnapshot.toObject(Makanan.class);
-                makanan.setKey(documentSnapshot.getId());
+        getDetailMakanan();
 
-                if (checkUserPemilikMakanan(makanan.getUserId())) {
-                    btnMinta.setVisibility(View.GONE);
-                    btnDelete.setVisibility(View.VISIBLE);
-
-                } else {
-                    btnDelete.setVisibility(View.GONE);
-                    btnMinta.setVisibility(View.VISIBLE);
-                }
-
-                namaMakanan.setText(makanan.getName());
-                jumlahMakanan.setText("Jumlah " + makanan.getJumlah().toString());
-                lokasiMakanan.setText("Lokasi " + makanan.getLokasi());
-                long timeInMillis = makanan.getDate().getTime();
-                dateMakanan.setText(DateUtils.getRelativeTimeSpanString(timeInMillis));
-                userName.setText(makanan.getUserName());
-                kontak.setText(makanan.getKontak());
-                Picasso.get().load(makanan.getImageUrl()).placeholder(R.drawable.ic_image_black_24dp).fit().centerCrop().into(imageView);
-            }
-        });
+        setButtonClickListener();
 
         setupRequestMakanan();
+        requestAdapter.startListening();
+    }
 
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hapusMakanan();
-            }
-        });
 
-        btnMinta.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MintaDialog dialog = new MintaDialog();
-                dialog.show(getSupportFragmentManager(), "Dialog Minta Makan");
-            }
-        });
+    private void getDetailMakanan() {
+        //get detail makanan
+        docRef = db.collection("makanan").document(MAKANAN_KEY);
 
-        lokasiMakanan.setOnClickListener(new View.OnClickListener() {
+        registration = docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onClick(View view) {
-                Uri gmmIntentUri = Uri.parse("geo:" + makanan.getLat() + "," + makanan.getLng() + "?q=" + makanan.getLokasi());
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-                if (mapIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(mapIntent);
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.e("Detail", "Listener Failed", e);
+                    return;
+                }
+
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    makanan = documentSnapshot.toObject(Makanan.class);
+                    makanan.setKey(documentSnapshot.getId());
+
+                    if (checkUserPemilikMakanan(makanan.getUserId())) {
+                        btnMinta.setVisibility(View.GONE);
+                        btnDelete.setVisibility(View.VISIBLE);
+
+                    } else {
+                        btnDelete.setVisibility(View.GONE);
+                        btnMinta.setVisibility(View.VISIBLE);
+                    }
+
+                    namaMakanan.setText(makanan.getName());
+                    jumlahMakanan.setText("Jumlah " + makanan.getJumlah().toString());
+                    lokasiMakanan.setText("Lokasi " + makanan.getLokasi());
+                    long timeInMillis = makanan.getDate().getTime();
+                    dateMakanan.setText(DateUtils.getRelativeTimeSpanString(timeInMillis));
+                    userName.setText(makanan.getUserName());
+                    kontak.setText(makanan.getKontak());
+                    Picasso.get().load(makanan.getImageUrl()).placeholder(R.drawable.ic_image_black_24dp).fit().centerCrop().into(imageView);
                 }
             }
         });
-
     }
 
     private void setupRequestMakanan() {
@@ -171,29 +186,45 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
         requestAdapter.setOnRequestClicked(new RequestAdapter.onRequestClickListener() {
             @Override
             public void onRequestClicked(DocumentSnapshot documentSnapshot, int position) {
-                if (checkUserPemilikMakanan(MAKANAN_USER_ID)) {
-
-                    Log.e("asd", "ASDASD");
-                    BagiDialog dialog = BagiDialog.newInstance(documentSnapshot.getId(), documentSnapshot.getString("userName"), documentSnapshot.getLong("jumlah").toString());
+                if (checkUserPemilikMakanan(MAKANAN_USER_ID) && documentSnapshot.getString("status").equals("requested")) {
+                    Makanan makanan = documentSnapshot.toObject(Makanan.class);
+                    BagiDialog dialog = BagiDialog.newInstance(documentSnapshot.getId(), makanan.getUserName(), makanan.getJumlah());
                     dialog.show(getSupportFragmentManager(), "Bagi Makan Dialog");
-
                 }
             }
         });
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        requestAdapter.startListening();
+    private void setButtonClickListener(){
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hapusMakanan();
+            }
+        });
+
+        btnMinta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MintaDialog dialog = MintaDialog.newInstance(makanan.getJumlah());
+                dialog.show(getSupportFragmentManager(), "Dialog Minta Makan");
+            }
+        });
+
+        lokasiMakanan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri gmmIntentUri = Uri.parse("geo:" + makanan.getLat() + "," + makanan.getLng() + "?q=" + makanan.getLokasi());
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(mapIntent);
+                }
+            }
+        });
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        requestAdapter.stopListening();
-    }
 
     private Boolean checkUserPemilikMakanan(String MakananUserId) {
         return (user.getUid().equals(MakananUserId));
@@ -223,10 +254,12 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
     }
 
     @Override
-    public void bagiMakan(String key, Boolean bagi) {
+    public void bagiMakan(String key, Integer jumlah, Boolean bagi) {
         String status;
-        if (bagi) {
+        if (bagi && makanan.getJumlah() >= jumlah) {
             status = "Disetujui";
+        } else if (makanan.getJumlah() < jumlah) {
+            status = "Sisa makanan kurang";
         } else {
             status = "Ditolak";
         }
