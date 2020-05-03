@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 
 public class MintaDialog extends AppCompatDialogFragment {
     private EditText inputMinta;
+    private EditText inputAlasan;
     private MintaDialogListener listener;
 
     public static MintaDialog newInstance(int maxJumlah) {
@@ -47,13 +49,17 @@ public class MintaDialog extends AppCompatDialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String jumlahMinta = inputMinta.getText().toString();
-                        listener.mintaMakan(jumlahMinta);
+                        String alasanMinta = inputAlasan.getText().toString();
+
+                        listener.mintaMakan(jumlahMinta, alasanMinta);
+
                     }
                 });
 
         Integer maxJumlah = getArguments().getInt("maxJumlah");
 
         inputMinta = view.findViewById(R.id.inputMinta);
+        inputAlasan = view.findViewById(R.id.inputAlasan_Minta);
         inputMinta.setFilters(new InputFilter[]{new InputFilterMinMax(1, maxJumlah)});
 
         return builder.create();
@@ -71,6 +77,6 @@ public class MintaDialog extends AppCompatDialogFragment {
     }
 
     public interface MintaDialogListener {
-        void mintaMakan(String jumlahMinta);
+        void mintaMakan(String jumlahMinta, String alasan);
     }
 }

@@ -81,11 +81,22 @@
             android:text="date" />
 
         <TextView
+            android:id="@+id/txtDeskripsiMakananDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layoutLokasiDetail"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:maxLines="4"
+            android:ellipsize="end"
+            android:text="Deskripsi Makanan" />
+
+        <TextView
             android:id="@+id/txtUserNameDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/layoutLokasiDetail"
-            android:layout_marginTop="4dp"
+            android:layout_below="@+id/txtDeskripsiMakananDetail"
             android:layout_marginStart="10dp"
             android:text="UserName" />
 

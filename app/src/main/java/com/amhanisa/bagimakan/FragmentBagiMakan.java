@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,6 +54,7 @@ public class FragmentBagiMakan extends Fragment {
     public int PICK_ADDRESS_REQUEST = 999;
 
     private EditText inputNamaMakanan;
+    private EditText inputDeskripsiMakanan;
     private EditText inputJumlahMakanan;
     private EditText inputLokasi;
     private Button btnChoosePhoto;
@@ -80,13 +82,16 @@ public class FragmentBagiMakan extends Fragment {
         View view = inflater.inflate(R.layout.fragment_bagimakan, container, false);
 
         inputNamaMakanan = view.findViewById(R.id.inputNamaMakanan);
+        inputDeskripsiMakanan = view.findViewById(R.id.inputDeskripsiMakanan);
         inputJumlahMakanan = view.findViewById(R.id.inputJumlahMakanan);
         inputLokasi = view.findViewById(R.id.inputLokasi);
         btnChoosePhoto = view.findViewById(R.id.btnChoosePhoto);
         btnBagiMakanan = view.findViewById(R.id.btnBagiMakanan);
         imageMakanan = view.findViewById(R.id.imageMakanan);
-        progressBagiMakan = view.findViewById(R.id.progressBagiMakan);
+        progressBagiMakan = view.findViewById(R.id.progressBarBagiMakan);
         btnMaps = view.findViewById(R.id.btnMaps);
+
+        inputJumlahMakanan.setFilters(new InputFilter[]{new InputFilterMinMax(1, 99999)});
 
         btnMaps.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,12 +112,15 @@ public class FragmentBagiMakan extends Fragment {
             @Override
             public void onClick(View view) {
                 String nama = inputNamaMakanan.getText().toString();
+                String deskripsi = inputDeskripsiMakanan.getText().toString();
                 String jumlah = inputJumlahMakanan.getText().toString();
                 String lokasi = inputLokasi.getText().toString();
 
                 //validasi input
                 if (TextUtils.isEmpty(nama)) {
                     inputNamaMakanan.setError("Please enter nama makanan");
+                } else if (TextUtils.isEmpty(deskripsi)) {
+                    inputDeskripsiMakanan.setError("Please enter deskripsi makanan");
                 } else if (TextUtils.isEmpty(jumlah)) {
                     inputJumlahMakanan.setError("Please enter jumlah makanan");
                 } else if (TextUtils.isEmpty(lokasi)) {
@@ -193,6 +201,7 @@ public class FragmentBagiMakan extends Fragment {
 
                                             //create POJO dari makanan
                                             Makanan makanan = new Makanan(inputNamaMakanan.getText().toString(),
+                                                    inputDeskripsiMakanan.getText().toString(),
                                                     Integer.parseInt(inputJumlahMakanan.getText().toString()),
                                                     inputLokasi.getText().toString(),
                                                     latlng.latitude,

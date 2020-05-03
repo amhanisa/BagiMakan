@@ -25,6 +25,7 @@ public class RequestAdapter extends FirestoreRecyclerAdapter<Request, RequestAda
     @Override
     protected void onBindViewHolder(@NonNull RequestViewHolder holder, int position, @NonNull Request model) {
         holder.txtUsername.setText(model.getUserName());
+        holder.txtAlasan.setText(model.getAlasan());
         holder.txtJumlah.setText(model.getJumlah().toString());
         holder.txtStatus.setText(model.getStatus());
     }
@@ -39,6 +40,7 @@ public class RequestAdapter extends FirestoreRecyclerAdapter<Request, RequestAda
     public class RequestViewHolder extends RecyclerView.ViewHolder {
 
         public TextView txtUsername;
+        public TextView txtAlasan;
         public TextView txtStatus;
         public TextView txtJumlah;
 
@@ -46,6 +48,7 @@ public class RequestAdapter extends FirestoreRecyclerAdapter<Request, RequestAda
             super(itemView);
 
             txtUsername = itemView.findViewById(R.id.txtRequestUserName);
+            txtAlasan = itemView.findViewById(R.id.txtRequestAlasan);
             txtStatus = itemView.findViewById(R.id.txtRequestStatus);
             txtJumlah = itemView.findViewById(R.id.txtRequestJumlah);
 

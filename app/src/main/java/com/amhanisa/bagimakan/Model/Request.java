@@ -6,15 +6,17 @@ public class Request {
 
     private String userId;
     private String userName;
+    private String alasan;
     private Integer jumlah;
     private String status;
     private String key;
 
     public Request(){}
 
-    public Request(String userId, String userName, Integer jumlah, String status) {
+    public Request(String userId, String userName, String alasan, Integer jumlah, String status) {
         this.userId = userId;
         this.userName = userName;
+        this.alasan = alasan;
         this.jumlah = jumlah;
         this.status = status;
     }
@@ -43,6 +45,14 @@ public class Request {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getAlasan() {
+        return alasan;
+    }
+
+    public void setAlasan(String alasan) {
+        this.alasan = alasan;
     }
 
     public Integer getJumlah() {

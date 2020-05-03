@@ -50,6 +50,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
 
     private ImageView imageView;
     private TextView namaMakanan;
+    private TextView deskripsiMakanan;
     private TextView lokasiMakanan;
     private TextView jumlahMakanan;
     private TextView dateMakanan;
@@ -79,6 +80,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
         user = firebaseAuth.getInstance().getCurrentUser();
 
         namaMakanan = findViewById(R.id.txtNamaMakananDetail);
+        deskripsiMakanan = findViewById(R.id.txtDeskripsiMakananDetail);
         jumlahMakanan = findViewById(R.id.txtJumlahMakananDetail);
         lokasiMakanan = findViewById(R.id.txtLokasiMakananDetail);
         dateMakanan = findViewById(R.id.txtDateMakananDetail);
@@ -153,8 +155,9 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
                     }
 
                     namaMakanan.setText(makanan.getName());
-                    jumlahMakanan.setText("Jumlah " + makanan.getJumlah().toString());
-                    lokasiMakanan.setText("Lokasi " + makanan.getLokasi());
+                    deskripsiMakanan.setText(makanan.getDeskripsi());
+                    jumlahMakanan.setText("Sisa " + makanan.getJumlah().toString());
+                    lokasiMakanan.setText(makanan.getLokasi());
                     long timeInMillis = makanan.getDate().getTime();
                     dateMakanan.setText(DateUtils.getRelativeTimeSpanString(timeInMillis));
                     userName.setText(makanan.getUserName());
@@ -231,26 +234,31 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
     }
 
     @Override
-    public void mintaMakan(String jumlahMinta) {
-        String userId = user.getUid();
-        String userName = user.getDisplayName();
-        Request request = new Request(userId, userName, Integer.parseInt(jumlahMinta), "requested");
+    public void mintaMakan(String jumlahMinta, String alasan) {
 
-        db.collection("makanan")
-                .document(MAKANAN_KEY)
-                .collection("request")
-                .add(request)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(DetailMakananActivity.this, "Permintaan anda sedang diproses", Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(DetailMakananActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        if(jumlahMinta.isEmpty() || alasan.isEmpty()){
+            Toast.makeText(this, "Isi jumlah dan alasan", Toast.LENGTH_SHORT).show();
+        } else{
+            String userId = user.getUid();
+            String userName = user.getDisplayName();
+            Request request = new Request(userId, userName, alasan, Integer.parseInt(jumlahMinta), "requested");
+
+            db.collection("makanan")
+                    .document(MAKANAN_KEY)
+                    .collection("request")
+                    .add(request)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Toast.makeText(DetailMakananActivity.this, "Permintaan anda sedang diproses", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(DetailMakananActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Override

@@ -35,12 +35,28 @@
 
         </LinearLayout>
 
-    <TextView
-        android:id="@+id/txtRequestUserName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:text="UserName"
-        android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtRequestUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="UserName"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtRequestAlasan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alasan"/>
+        </LinearLayout>
+
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

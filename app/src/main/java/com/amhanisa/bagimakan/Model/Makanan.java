@@ -7,6 +7,7 @@ import java.util.Date;
 public class Makanan {
 
     private String name;
+    private String deskripsi;
     private Integer jumlah;
     private String lokasi;
     private Double lat;
@@ -22,8 +23,9 @@ public class Makanan {
 
     }
 
-    public Makanan(String name, Integer jumlah, String lokasi, Double lat, Double lng, String imageUrl, String userName, String userId, Date date, String kontak) {
+    public Makanan(String name, String deskripsi, Integer jumlah, String lokasi, Double lat, Double lng, String imageUrl, String userName, String userId, Date date, String kontak) {
         this.name = name;
+        this.deskripsi = deskripsi;
         this.jumlah = jumlah;
         this.lokasi = lokasi;
         this.lat = lat;
@@ -51,6 +53,14 @@ public class Makanan {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDeskripsi() {
+        return deskripsi;
+    }
+
+    public void setDeskripsi(String deskripsi) {
+        this.deskripsi = deskripsi;
     }
 
     public Integer getJumlah() {
