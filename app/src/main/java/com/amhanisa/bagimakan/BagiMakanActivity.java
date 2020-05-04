@@ -203,6 +203,7 @@ public class BagiMakanActivity extends AppCompatActivity {
             @Override
             public void onSuccess(List<Object> objects) {
 
+                //ambil data user (kontak)
                 db.collection("users").document(user.getUid())
                         .get()
                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

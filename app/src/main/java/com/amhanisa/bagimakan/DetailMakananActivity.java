@@ -99,8 +99,6 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
         kontak = findViewById(R.id.txtKontakDetail);
         btnMinta = findViewById(R.id.btnMintaMakanan);
 
-        imageUri = new ArrayList<>();
-
         onNewIntent(getIntent());
     }
 
@@ -108,7 +106,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
     protected void onStart() {
         super.onStart();
         requestAdapter.startListening();
-        getDetailMakanan();
+//        getDetailMakanan();
     }
 
     @Override
@@ -200,9 +198,12 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
                             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                 @Override
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    imageUri = new ArrayList<>();
                                     for (QueryDocumentSnapshot hasil : queryDocumentSnapshots) {
                                         imageUri.add(hasil.getString("imageUri"));
+                                        Log.e("ASD", hasil.getString("imageUri"));
                                     }
+
                                     viewAdapter = new ViewImageAdapter(DetailMakananActivity.this, imageUri);
                                     viewImage.setAdapter(viewAdapter);
 
