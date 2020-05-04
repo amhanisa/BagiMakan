@@ -4,17 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:attrs="http://schemas.android.com/tools"
     tools:context=".DetailMakananActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageMakananDetail"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutViewPager"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+            android:layout_height="wrap_content">
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewPagerMakanan"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.rd.PageIndicatorView
+                android:id="@+id/pageIndicatorView"
+                attrs:piv_padding="12dp"
+                attrs:piv_radius="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/viewPagerMakanan"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:piv_animationType="scale"
+                app:piv_dynamicCount="true"
+                app:piv_interactiveAnimation="true"
+                app:piv_selectedColor="#FFF"
+                app:piv_unselectedColor="#AAA"
+                app:piv_viewPager="@+id/viewPagerMakanan" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/containerButton"
@@ -74,7 +103,7 @@
             android:id="@+id/txtDateMakananDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageMakananDetail"
+            android:layout_below="@+id/layoutViewPager"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
@@ -122,7 +151,7 @@
             android:id="@+id/txtNamaMakananDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageMakananDetail"
+            android:layout_below="@+id/layoutViewPager"
             android:layout_alignParentStart="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"

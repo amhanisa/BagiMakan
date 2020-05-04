@@ -113,16 +113,11 @@
         android:layout_alignParentEnd="true"
         android:text="Choose Photo" />
 
-    <ImageView
-        android:id="@+id/imageMakanan"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewInputImage"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@+id/btnChoosePhoto"
-
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="5dp"
-        android:cropToPadding="false"
-        tools:src="@tools:sample/backgrounds/scenic" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/btnChoosePhoto"/>
 
 
 </RelativeLayout>

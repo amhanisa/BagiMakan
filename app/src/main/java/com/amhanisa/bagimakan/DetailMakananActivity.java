@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amhanisa.bagimakan.Adapter.RequestAdapter;
+import com.amhanisa.bagimakan.Adapter.ViewImageAdapter;
 import com.amhanisa.bagimakan.Model.Makanan;
 import com.amhanisa.bagimakan.Model.Request;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -35,23 +37,29 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public class DetailMakananActivity extends AppCompatActivity implements MintaDialog.MintaDialogListener, BagiDialog.BagiDialogListener {
 
-    private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
     private FirebaseStorage firebaseStorage;
     private FirebaseUser user;
 
-    private ImageView imageView;
+    private ViewPager viewImage;
+    private ViewImageAdapter viewAdapter;
+    private List<String> imageUri;
+
     private TextView namaMakanan;
     private TextView deskripsiMakanan;
     private TextView lokasiMakanan;
@@ -63,7 +71,6 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
     private RecyclerView recyclerView;
     private RequestAdapter requestAdapter;
 
-    private Button btnDelete;
     private Button btnMinta;
 
     private String MAKANAN_KEY;
@@ -80,18 +87,19 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
 
         db = FirebaseFirestore.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
-        user = firebaseAuth.getInstance().getCurrentUser();
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         namaMakanan = findViewById(R.id.txtNamaMakananDetail);
         deskripsiMakanan = findViewById(R.id.txtDeskripsiMakananDetail);
         jumlahMakanan = findViewById(R.id.txtJumlahMakananDetail);
         lokasiMakanan = findViewById(R.id.txtLokasiMakananDetail);
         dateMakanan = findViewById(R.id.txtDateMakananDetail);
-        imageView = findViewById(R.id.imageMakananDetail);
+        viewImage = findViewById(R.id.viewPagerMakanan);
         userName = findViewById(R.id.txtUserNameDetail);
         kontak = findViewById(R.id.txtKontakDetail);
-        btnDelete = findViewById(R.id.btnDeleteMakanan);
         btnMinta = findViewById(R.id.btnMintaMakanan);
+
+        imageUri = new ArrayList<>();
 
         onNewIntent(getIntent());
     }
@@ -137,14 +145,14 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.menu_detail_makanan, menu);
             return true;
-        } else{
+        } else {
             return false;
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.item_delete:
                 hapusMakanan();
                 return true;
@@ -154,6 +162,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
     }
 
     private void getDetailMakanan() {
+
         //get detail makanan
         docRef = db.collection("makanan").document(MAKANAN_KEY);
 
@@ -183,7 +192,23 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
                     dateMakanan.setText(DateUtils.getRelativeTimeSpanString(timeInMillis));
                     userName.setText(makanan.getUserName());
                     kontak.setText(makanan.getKontak());
-                    Picasso.get().load(makanan.getImageUrl()).placeholder(R.drawable.ic_image_black_24dp).fit().centerCrop().into(imageView);
+
+                    db.collection("makanan")
+                            .document(MAKANAN_KEY)
+                            .collection("image")
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    for (QueryDocumentSnapshot hasil : queryDocumentSnapshots) {
+                                        imageUri.add(hasil.getString("imageUri"));
+                                    }
+                                    viewAdapter = new ViewImageAdapter(DetailMakananActivity.this, imageUri);
+                                    viewImage.setAdapter(viewAdapter);
+
+                                }
+                            });
+
                 }
             }
         });
@@ -220,14 +245,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
 
     }
 
-    private void setButtonClickListener(){
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hapusMakanan();
-            }
-        });
-
+    private void setButtonClickListener() {
         btnMinta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -257,9 +275,9 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
     @Override
     public void mintaMakan(String jumlahMinta, String alasan) {
 
-        if(jumlahMinta.isEmpty() || alasan.isEmpty()){
+        if (jumlahMinta.isEmpty() || alasan.isEmpty()) {
             Toast.makeText(this, "Isi jumlah dan alasan", Toast.LENGTH_SHORT).show();
-        } else{
+        } else {
             String userId = user.getUid();
             String userName = user.getDisplayName();
             Request request = new Request(userId, userName, alasan, Integer.parseInt(jumlahMinta), "requested");
