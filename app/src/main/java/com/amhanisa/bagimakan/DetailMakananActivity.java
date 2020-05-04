@@ -11,6 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -128,6 +131,27 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
         requestAdapter.startListening();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (checkUserPemilikMakanan(makanan.getUserId())) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_detail_makanan, menu);
+            return true;
+        } else{
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.item_delete:
+                hapusMakanan();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     private void getDetailMakanan() {
         //get detail makanan
@@ -147,10 +171,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
 
                     if (checkUserPemilikMakanan(makanan.getUserId())) {
                         btnMinta.setVisibility(View.GONE);
-                        btnDelete.setVisibility(View.VISIBLE);
-
                     } else {
-                        btnDelete.setVisibility(View.GONE);
                         btnMinta.setVisibility(View.VISIBLE);
                     }
 

@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,20 +34,20 @@ public class DashboardActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment selectedFragment = null;
+
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    selectedFragment = new FragmentHome();
+                    replaceFragment(new FragmentHome());
+                    setTitle("Home");
                     break;
                 case R.id.navigation_bagimakan:
-                    selectedFragment = new FragmentBagiMakan();
-                    break;
+                    startActivity(new Intent(DashboardActivity.this, BagiMakanActivity.class));
+                    return false;
                 case R.id.navigation_profile:
-                    selectedFragment = new FragmentProfile();
+                    replaceFragment(new FragmentProfile());
+                    setTitle("Profile");
                     break;
             }
-
-            replaceFragment(selectedFragment);
 
             return true;
         }

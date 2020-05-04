@@ -5,17 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".FragmentBagiMakan">
+    tools:context=".BagiMakanActivity">
+
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     android:id="@+id/layoutBagiMakanan">
+
+    <ProgressBar
+        android:id="@+id/progressBarBagiMakan"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:visibility="visible"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/layoutNamaMakanan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/progressBarBagiMakan"
         app:errorEnabled="true"
         app:counterMaxLength="40">
 
@@ -114,20 +124,6 @@
         android:cropToPadding="false"
         tools:src="@tools:sample/backgrounds/scenic" />
 
-    <ProgressBar
-        android:id="@+id/progressBarBagiMakan"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageMakanan" />
-
-    <Button
-        android:id="@+id/btnBagiMakanan"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:layout_below="@+id/progressBarBagiMakan"
-        android:text="Bagi Makanan" />
 
 </RelativeLayout>
 </androidx.core.widget.NestedScrollView>

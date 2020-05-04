@@ -8,14 +8,15 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,13 +43,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Date;
 
-import static android.app.Activity.RESULT_OK;
-
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class FragmentBagiMakan extends Fragment {
+public class BagiMakanActivity extends AppCompatActivity {
 
     public int PICK_IMAGE_REQUEST = 1;
     public int PICK_ADDRESS_REQUEST = 999;
@@ -58,7 +53,6 @@ public class FragmentBagiMakan extends Fragment {
     private EditText inputJumlahMakanan;
     private EditText inputLokasi;
     private Button btnChoosePhoto;
-    private Button btnBagiMakanan;
     private ImageView imageMakanan;
     private ProgressBar progressBagiMakan;
     private ImageButton btnMaps;
@@ -70,33 +64,26 @@ public class FragmentBagiMakan extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageTask uploadTask;
 
-    public FragmentBagiMakan() {
-        // Required empty public constructor
-    }
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_bagimakan, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_bagi_makan);
 
-        inputNamaMakanan = view.findViewById(R.id.inputNamaMakanan);
-        inputDeskripsiMakanan = view.findViewById(R.id.inputDeskripsiMakanan);
-        inputJumlahMakanan = view.findViewById(R.id.inputJumlahMakanan);
-        inputLokasi = view.findViewById(R.id.inputLokasi);
-        btnChoosePhoto = view.findViewById(R.id.btnChoosePhoto);
-        btnBagiMakanan = view.findViewById(R.id.btnBagiMakanan);
-        imageMakanan = view.findViewById(R.id.imageMakanan);
-        progressBagiMakan = view.findViewById(R.id.progressBarBagiMakan);
-        btnMaps = view.findViewById(R.id.btnMaps);
+        inputNamaMakanan = findViewById(R.id.inputNamaMakanan);
+        inputDeskripsiMakanan = findViewById(R.id.inputDeskripsiMakanan);
+        inputJumlahMakanan = findViewById(R.id.inputJumlahMakanan);
+        inputLokasi = findViewById(R.id.inputLokasi);
+        btnChoosePhoto = findViewById(R.id.btnChoosePhoto);
+        imageMakanan = findViewById(R.id.imageMakanan);
+        progressBagiMakan = findViewById(R.id.progressBarBagiMakan);
+        btnMaps = findViewById(R.id.btnMaps);
 
         inputJumlahMakanan.setFilters(new InputFilter[]{new InputFilterMinMax(1, 99999)});
 
         btnMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent maps = new Intent(getContext(), MapsActivity.class);
+                Intent maps = new Intent(BagiMakanActivity.this, MapsActivity.class);
                 startActivityForResult(maps, PICK_ADDRESS_REQUEST);
             }
         });
@@ -107,39 +94,24 @@ public class FragmentBagiMakan extends Fragment {
                 openFileChooser();
             }
         });
+    }
 
-        btnBagiMakanan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String nama = inputNamaMakanan.getText().toString();
-                String deskripsi = inputDeskripsiMakanan.getText().toString();
-                String jumlah = inputJumlahMakanan.getText().toString();
-                String lokasi = inputLokasi.getText().toString();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_bagi_makanan, menu);
+        return true;
+    }
 
-                //validasi input
-                if (TextUtils.isEmpty(nama)) {
-                    inputNamaMakanan.setError("Please enter nama makanan");
-                } else if (TextUtils.isEmpty(deskripsi)) {
-                    inputDeskripsiMakanan.setError("Please enter deskripsi makanan");
-                } else if (TextUtils.isEmpty(jumlah)) {
-                    inputJumlahMakanan.setError("Please enter jumlah makanan");
-                } else if (TextUtils.isEmpty(lokasi)) {
-                    inputLokasi.setError("Please enter lokasi");
-                } else if (imageUri == null) {
-                    Toast.makeText(getContext(), "No File selected", Toast.LENGTH_LONG).show();
-                } else {
-                    if (uploadTask != null && uploadTask.isInProgress()) {
-                        Log.e("ERRORRRR", "WOOOY");
-                        Toast.makeText(getContext(), "Upload in progress", Toast.LENGTH_SHORT).show();
-                    } else {
-                        //upload image dan add database
-                        bagiMakanan();
-                    }
-                }
-            }
-        });
-
-        return view;
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_bagi_makanan:
+                bagiMakanan();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void openFileChooser() {
@@ -167,12 +139,16 @@ public class FragmentBagiMakan extends Fragment {
     }
 
     private String getFileExtension(Uri uri) {
-        ContentResolver cR = getContext().getContentResolver();
+        ContentResolver cR = this.getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
     private void bagiMakanan() {
+
+        if(!validasiInput()){
+            return;
+        }
 
         //set filename
         storageReference = FirebaseStorage.getInstance().getReference("makanan");
@@ -219,8 +195,8 @@ public class FragmentBagiMakan extends Fragment {
                                                         @Override
                                                         public void onSuccess(DocumentReference documentReference) {
                                                             //redirect ke home
-                                                            Toast.makeText(getContext(), "Berhasil Berbagi Makan", Toast.LENGTH_LONG).show();
-                                                            ((DashboardActivity) getActivity()).replaceFragment(new FragmentHome());
+                                                            Toast.makeText(BagiMakanActivity.this, "Berhasil Berbagi Makan", Toast.LENGTH_LONG).show();
+                                                            finish();
                                                         }
                                                     });
 
@@ -237,7 +213,7 @@ public class FragmentBagiMakan extends Fragment {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(BagiMakanActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -247,4 +223,32 @@ public class FragmentBagiMakan extends Fragment {
                     }
                 });
     }
+
+    private Boolean validasiInput() {
+        String nama = inputNamaMakanan.getText().toString();
+        String deskripsi = inputDeskripsiMakanan.getText().toString();
+        String jumlah = inputJumlahMakanan.getText().toString();
+        String lokasi = inputLokasi.getText().toString();
+
+        //validasi input
+        if (TextUtils.isEmpty(nama)) {
+            inputNamaMakanan.setError("Please enter nama makanan");
+        } else if (TextUtils.isEmpty(deskripsi)) {
+            inputDeskripsiMakanan.setError("Please enter deskripsi makanan");
+        } else if (TextUtils.isEmpty(jumlah)) {
+            inputJumlahMakanan.setError("Please enter jumlah makanan");
+        } else if (TextUtils.isEmpty(lokasi)) {
+            inputLokasi.setError("Please enter lokasi");
+        } else if (imageUri == null) {
+            Toast.makeText(BagiMakanActivity.this, "No File selected", Toast.LENGTH_LONG).show();
+        } else if (uploadTask != null && uploadTask.isInProgress()) {
+            Log.e("ERRORRRR", "WOOOY");
+            Toast.makeText(BagiMakanActivity.this, "Upload in progress", Toast.LENGTH_SHORT).show();
+        } else {
+            return true;
+        }
+        return false;
+    }
+
 }
+
