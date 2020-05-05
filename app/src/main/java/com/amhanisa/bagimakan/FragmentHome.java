@@ -68,6 +68,14 @@ public class FragmentHome extends Fragment {
                 startActivity(detail);
             }
         });
+
+        makananAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                recyclerView.smoothScrollToPosition(positionStart);
+            }
+        });
     }
 
     @Override

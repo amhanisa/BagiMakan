@@ -1,5 +1,6 @@
 package com.amhanisa.bagimakan;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -19,6 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import java.util.HashMap;
@@ -71,7 +74,7 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         //get user
-       user = firebaseAuth.getCurrentUser();
+        user = firebaseAuth.getCurrentUser();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -103,7 +106,7 @@ public class DashboardActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                   Log.e("TOKENADD", token);
+                                        Log.e("TOKENADD", token);
                                     }
                                 });
 
@@ -111,4 +114,21 @@ public class DashboardActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_dashboard, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_chat:
+                startActivity(new Intent(this, LobbyChatActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

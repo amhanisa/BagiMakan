@@ -26,8 +26,10 @@ import com.amhanisa.bagimakan.Adapter.ViewImageAdapter;
 import com.amhanisa.bagimakan.Model.Makanan;
 import com.amhanisa.bagimakan.Model.Request;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -54,7 +56,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
 
     private FirebaseFirestore db;
     private FirebaseStorage firebaseStorage;
-    private FirebaseUser user;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     private ViewPager viewImage;
     private ViewImageAdapter viewAdapter;
@@ -72,6 +74,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
     private RequestAdapter requestAdapter;
 
     private Button btnMinta;
+    private Button btnChat;
 
     private String MAKANAN_KEY;
     private String MAKANAN_USER_ID;
@@ -86,8 +89,6 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
         setContentView(R.layout.activity_detail_makanan);
 
         db = FirebaseFirestore.getInstance();
-        firebaseStorage = FirebaseStorage.getInstance();
-        user = FirebaseAuth.getInstance().getCurrentUser();
 
         namaMakanan = findViewById(R.id.txtNamaMakananDetail);
         deskripsiMakanan = findViewById(R.id.txtDeskripsiMakananDetail);
@@ -98,6 +99,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
         userName = findViewById(R.id.txtUserNameDetail);
         kontak = findViewById(R.id.txtKontakDetail);
         btnMinta = findViewById(R.id.btnMintaMakanan);
+        btnChat = findViewById(R.id.btnChatDetail);
 
         onNewIntent(getIntent());
     }
@@ -178,6 +180,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
 
                     if (checkUserPemilikMakanan(makanan.getUserId())) {
                         btnMinta.setVisibility(View.GONE);
+                        btnChat.setVisibility(View.GONE);
                     } else {
                         btnMinta.setVisibility(View.VISIBLE);
                     }
@@ -266,8 +269,71 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
                 }
             }
         });
+
+        btnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //check if user already have room
+                db.collection("users").document(user.getUid())
+                        .collection("room").whereEqualTo("partner", MAKANAN_USER_ID)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (!task.getResult().isEmpty()) {
+
+                                    Intent chatroom = new Intent(DetailMakananActivity.this, RoomChatActivity.class);
+                                    chatroom.putExtra("roomId", task.getResult().getDocuments().get(0).getId());
+
+                                    startActivity(chatroom);
+                                    Log.e("CHAT", "Ga bikin baru");
+                                } else {
+                                    createRoom();
+                                    Log.e("CHAT", "Bikin baru");
+                                }
+                            }
+                        });
+            }
+        });
     }
 
+    private void createRoom() {
+        final String roomId = db.collection("chatroom").document().getId();
+
+        Map<String, String> partner = new HashMap<>();
+        partner.put("partner", MAKANAN_USER_ID);
+        partner.put("partnerName", makanan.getUserName());
+
+        db.collection("users").document(user.getUid())
+                .collection("room")
+                .document(roomId)
+                .set(partner)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Map<String, String> partner = new HashMap<>();
+                        partner.put("partner", user.getUid());
+                        partner.put("partnerName", user.getDisplayName());
+
+                        db.collection("users").document(MAKANAN_USER_ID)
+                                .collection("room")
+                                .document(roomId)
+                                .set(partner)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+
+                                        Intent chatroom = new Intent(DetailMakananActivity.this, RoomChatActivity.class);
+                                        chatroom.putExtra("roomId", roomId);
+                                        startActivity(chatroom);
+
+                                    }
+                                });
+                    }
+                });
+
+    }
 
     private Boolean checkUserPemilikMakanan(String MakananUserId) {
         return (user.getUid().equals(MakananUserId));
