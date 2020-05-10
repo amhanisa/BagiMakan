@@ -56,7 +56,10 @@ public class FragmentHome extends Fragment {
 
         recyclerView = view.findViewById(R.id.recyclerViewMakanan_Home);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+
         recyclerView.setAdapter(makananAdapter);
 
         makananAdapter.setOnItemClickListener(new MakananAdapter.onItemClickListener() {
@@ -73,7 +76,7 @@ public class FragmentHome extends Fragment {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
-                recyclerView.smoothScrollToPosition(positionStart);
+                recyclerView.smoothScrollToPosition(itemCount-1);
             }
         });
     }
