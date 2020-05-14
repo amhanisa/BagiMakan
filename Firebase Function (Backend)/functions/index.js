@@ -4,23 +4,6 @@ admin.initializeApp();
 
 const db = admin.firestore();
 
-exports.getData = functions.https.onRequest((req, res) => {
-    const docRef = db.collection('makanan').doc('8Q221pUbRfg40NaXsrlT');
-
-    const gecDoc = docRef.get()
-        .then(doc => {
-            if (!doc.exists) {
-                console.log("No such document");
-                return res.send("Not Found")
-            }
-            console.log(doc.data());
-            return res.send(doc.data());
-        })
-        .catch(err => {
-            console.log('Error getting document', err);
-        });
-});
-
 exports.kurangiJumlah = functions.firestore
     .document('makanan/{makananId}/request/{reqId}')
     .onUpdate((change, context) => {
@@ -151,5 +134,25 @@ exports.sendNotificationRequest = functions.firestore
             })
             .catch(err => {
                 console.log("GAGAL", err);
+            });
+    });
+
+exports.deletesubcollectionmakanan = functions.firestore
+    .document('makanan/{makananId}')
+    .onDelete((snap, context) => {
+        const deletedValue = snap.data();
+
+        let collectionRequest = db.collection('makanan').doc(deletedValue.id).collection('request');
+
+        let allRequest = collectionRequest.get()
+            .then(snapshot => {
+                snapshot.forEach(doc => {
+                    db.collection('makanan').doc(deletedValue.id).collection('request').doc(doc.id).delete();
+                });
+
+                return snapshot.data();
+            })
+            .catch(err => {
+                console.log('Error getting documents', err);
             });
     });

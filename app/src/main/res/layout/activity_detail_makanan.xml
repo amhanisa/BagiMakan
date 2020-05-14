@@ -145,6 +145,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="10dp"
             android:text="JumlahMakanan"
+            android:textAlignment="viewEnd"
             android:textSize="18sp" />
 
         <TextView

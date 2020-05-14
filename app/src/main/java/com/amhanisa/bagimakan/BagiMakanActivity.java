@@ -1,6 +1,5 @@
 package com.amhanisa.bagimakan;
 
-
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -58,6 +57,7 @@ public class BagiMakanActivity extends AppCompatActivity {
     private EditText inputNamaMakanan;
     private EditText inputDeskripsiMakanan;
     private EditText inputJumlahMakanan;
+    private EditText inputSatuanMakanan;
     private EditText inputLokasi;
     private Button btnChoosePhoto;
     private ProgressBar progressBagiMakan;
@@ -86,6 +86,7 @@ public class BagiMakanActivity extends AppCompatActivity {
         inputNamaMakanan = findViewById(R.id.inputNamaMakanan);
         inputDeskripsiMakanan = findViewById(R.id.inputDeskripsiMakanan);
         inputJumlahMakanan = findViewById(R.id.inputJumlahMakanan);
+        inputSatuanMakanan = findViewById(R.id.inputSatuanMakanan);
         inputLokasi = findViewById(R.id.inputLokasi);
         btnChoosePhoto = findViewById(R.id.btnChoosePhoto);
         progressBagiMakan = findViewById(R.id.progressBarBagiMakan);
@@ -214,6 +215,7 @@ public class BagiMakanActivity extends AppCompatActivity {
                                     Makanan makanan = new Makanan(inputNamaMakanan.getText().toString(),
                                             inputDeskripsiMakanan.getText().toString(),
                                             Integer.parseInt(inputJumlahMakanan.getText().toString()),
+                                            inputSatuanMakanan.getText().toString(),
                                             inputLokasi.getText().toString(),
                                             latlng.latitude,
                                             latlng.longitude,
@@ -282,6 +284,7 @@ public class BagiMakanActivity extends AppCompatActivity {
         String nama = inputNamaMakanan.getText().toString();
         String deskripsi = inputDeskripsiMakanan.getText().toString();
         String jumlah = inputJumlahMakanan.getText().toString();
+        String satuan = inputSatuanMakanan.getText().toString();
         String lokasi = inputLokasi.getText().toString();
 
         //validasi input
@@ -291,6 +294,8 @@ public class BagiMakanActivity extends AppCompatActivity {
             inputDeskripsiMakanan.setError("Please enter deskripsi makanan");
         } else if (TextUtils.isEmpty(jumlah)) {
             inputJumlahMakanan.setError("Please enter jumlah makanan");
+        }  else if (TextUtils.isEmpty(satuan)) {
+            inputSatuanMakanan.setError("Please enter satuan makanan");
         } else if (TextUtils.isEmpty(lokasi)) {
             inputLokasi.setError("Please enter lokasi");
         } else if (imageList.isEmpty()) {

@@ -166,7 +166,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         new LatLng(mLastKnownLocation.getLatitude(),
                                 mLastKnownLocation.getLongitude()), 100));
 
-                markerPosisi = markerPosisi = mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude())).draggable(true));
+                markerPosisi = mMap.addMarker(new MarkerOptions().position(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude())).draggable(true));
                 getAddress();
                 Log.e("LASTT", String.valueOf(mLastKnownLocation.getLatitude()));
             }

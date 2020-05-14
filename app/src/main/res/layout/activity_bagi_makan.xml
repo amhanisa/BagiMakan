@@ -73,10 +73,27 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layoutLokasi"
+        android:id="@+id/layoutSatuanMakanan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutJumlahMakanan"
+        app:errorEnabled="true"
+        app:counterMaxLength="5">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputSatuanMakanan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Satuan"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutLokasi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutSatuanMakanan"
         android:layout_toStartOf="@+id/btnMaps"
         android:orientation="horizontal"
         app:errorEnabled="true">
@@ -98,7 +115,7 @@
         android:id="@+id/btnMaps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layoutJumlahMakanan"
+        android:layout_below="@+id/layoutSatuanMakanan"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="10dp"
         android:layout_weight="1"

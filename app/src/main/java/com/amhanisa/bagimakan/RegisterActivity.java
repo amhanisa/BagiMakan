@@ -30,7 +30,6 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText inputPassword;
     private EditText inputRePassword;
     private Button btnSignup;
-    ;
     private TextView txtLogin;
 
     private FirebaseAuth firebaseAuth;

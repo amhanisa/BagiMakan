@@ -52,7 +52,6 @@ public class ChatAdapter extends FirestoreRecyclerAdapter<Chat, ChatAdapter.Chat
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_right, parent, false);
             return new ChatViewHolder(view);
         }
-
     }
 
     public class ChatViewHolder extends RecyclerView.ViewHolder {

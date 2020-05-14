@@ -54,6 +54,8 @@ import java.util.Map;
 
 public class DetailMakananActivity extends AppCompatActivity implements MintaDialog.MintaDialogListener, BagiDialog.BagiDialogListener {
 
+    public static final int EDIT_MAKAN_REQUEST = 99;
+
     private FirebaseFirestore db;
     private FirebaseStorage firebaseStorage;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -108,7 +110,6 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
     protected void onStart() {
         super.onStart();
         requestAdapter.startListening();
-//        getDetailMakanan();
     }
 
     @Override
@@ -156,6 +157,9 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
             case R.id.item_delete:
                 hapusMakanan();
                 return true;
+            case R.id.item_edit:
+                editMakanan();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -187,7 +191,7 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
 
                     namaMakanan.setText(makanan.getName());
                     deskripsiMakanan.setText(makanan.getDeskripsi());
-                    jumlahMakanan.setText("Sisa " + makanan.getJumlah().toString());
+                    jumlahMakanan.setText("Sisa " + makanan.getJumlah().toString() + "\n" + makanan.getSatuan());
                     lokasiMakanan.setText(makanan.getLokasi());
                     long timeInMillis = makanan.getDate().getTime();
                     dateMakanan.setText(DateUtils.getRelativeTimeSpanString(timeInMillis));
@@ -261,12 +265,11 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
         lokasiMakanan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Uri gmmIntentUri = Uri.parse("geo:" + makanan.getLat() + "," + makanan.getLng() + "?q=" + makanan.getLokasi());
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                mapIntent.setPackage("com.google.android.apps.maps");
-                if (mapIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(mapIntent);
-                }
+               Intent openMap = new Intent(DetailMakananActivity.this, MapsDetailActivity.class);
+               openMap.putExtra("lat", makanan.getLat());
+               openMap.putExtra("lng", makanan.getLng());
+               openMap.putExtra("lokasi", makanan.getLokasi());
+               startActivity(openMap);
             }
         });
 
@@ -395,25 +398,33 @@ public class DetailMakananActivity extends AppCompatActivity implements MintaDia
     }
 
     public void hapusMakanan() {
-        StorageReference imageRef = firebaseStorage.getReferenceFromUrl(makanan.getImageUrl());
-        imageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                db.collection("makanan")
-                        .document(MAKANAN_KEY).delete()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(DetailMakananActivity.this, "Item Deleted", Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                        });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(DetailMakananActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        db.collection("makanan")
+                .document(MAKANAN_KEY).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(DetailMakananActivity.this, "Item Deleted", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
+
+//        TODO: delete image and request
+    }
+
+    public void editMakanan(){
+
+        Intent editMakan = new Intent(this, EditMakanActivity.class);
+        editMakan.putExtra("makananId", MAKANAN_KEY);
+        startActivityForResult(editMakan, EDIT_MAKAN_REQUEST);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == EDIT_MAKAN_REQUEST && resultCode == RESULT_OK){
+            getDetailMakanan();
+            Log.e("TEST", "asd");
+        }
     }
 }

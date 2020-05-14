@@ -9,6 +9,7 @@ public class Makanan {
     private String name;
     private String deskripsi;
     private Integer jumlah;
+    private String satuan;
     private String lokasi;
     private Double lat;
     private Double lng;
@@ -23,10 +24,11 @@ public class Makanan {
 
     }
 
-    public Makanan(String name, String deskripsi, Integer jumlah, String lokasi, Double lat, Double lng, String imageUrl, String userName, String userId, Date date, String kontak) {
+    public Makanan(String name, String deskripsi, Integer jumlah, String satuan, String lokasi, Double lat, Double lng, String imageUrl, String userName, String userId, Date date, String kontak) {
         this.name = name;
         this.deskripsi = deskripsi;
         this.jumlah = jumlah;
+        this.satuan = satuan;
         this.lokasi = lokasi;
         this.lat = lat;
         this.lng = lng;
@@ -69,6 +71,14 @@ public class Makanan {
 
     public void setJumlah(Integer jumlah) {
         this.jumlah = jumlah;
+    }
+
+    public String getSatuan() {
+        return satuan;
+    }
+
+    public void setSatuan(String satuan) {
+        this.satuan = satuan;
     }
 
     public String getLokasi() {
